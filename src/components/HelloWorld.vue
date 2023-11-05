@@ -1,58 +1,92 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
-  </div>
+<div class="container ">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card text-center">
+                <div class="card-header bg-info">
+                    <h1>To Do</h1>
+                </div>
+                <div class="card-body  ">
+                    <form @submit.prevent="addTodo()" class="d-flex mb-2">
+                        <input v-model="todoInput" type="text" class="form-control me-2">
+
+                        <button type="submit" class="btn btn-success">
+                            <i class="bi bi-plus-lg"></i>
+                        </button>
+                    </form>
+                    <div class="input-group rounded mb-3">
+                        <input v-if="isSearcch" v-model="searchQuery" type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                        <button @click="showSearch" class="btn">
+                            <i class="bi bi-search"></i>
+                        </button>
+
+                    </div>
+                    <ul class="list-group">
+                        <li v-for="(todo,index) in fiterTodos" :key="index" :style="{  backgroundColor: todo.isComplete ? 'Salmon' : 'PaleGreen' }" class="list-group-item d-flex justify-content-between mb-2">
+                            <div>
+                                <h3>{{ todo.value }}</h3>
+                            </div>
+                            <div>
+                                <button @click="completeTask(todo)" class="btn  me-2"><i class="bi bi-check"></i></button>
+                                <button @click="deleteTodo(index)" class="btn "><i class="bi bi-trash"></i></button>
+                            </div>
+                        </li>
+
+                    </ul>
+
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
-</script>
+    name: 'HelloWorld',
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped>
-h3 {
-  margin: 40px 0 0;
+    data() {
+        return {
+            todos: [],
+            todoInput: null,
+            isTaskComplete: false,
+            isSearcch: false,
+            searchQuery: ''
+        }
+    },
+    computed:{
+        fiterTodos(){
+            if(!this.searchQuery){
+                return this.todos;
+            }
+            return this.todos.filter(el=>{
+                return el.value.toString().toLowerCase().includes(this.searchQuery.toString().toLowerCase());
+            })
+        }
+    },
+    methods: {
+        addTodo() {
+            this.todos.push({
+                value: this.todoInput,
+                isComplete: false
+            });
+            this.todoInput = null;
+        },
+        deleteTodo(index) {
+            this.todos.splice(index, 1);
+        },
+
+        completeTask(todo) {
+            todo.isComplete = true;
+        },
+        showSearch() {
+            this.isSearcch = !this.isSearcch
+        },
+
+    },
+    
+ 
 }
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
-</style>
+
+</script>
